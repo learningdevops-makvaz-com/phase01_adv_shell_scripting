@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # feel free to use this option in case of wrong parameters set, or help needed
-function usage(){
+usage(){
   echo "proc_info.sh - An easy cli tool for PID inspection"
   echo
   echo "Usage:"
@@ -15,6 +15,17 @@ function usage(){
   echo "-f                   Show opened files by the process"
   echo "-h                   Show this help"
   exit 0
+}
+
+info(){
+  pid=$(echo $1 | sed -e 's/^[^=]*=//g')
+  who_folder=$(sudo lsof -w -p ${pid} | grep cwd | awk '{ print $9 }')
+  who_user=$(sudo lsof -w -p ${pid} | grep cwd | awk '{ print $3 }')
+  triggered_by_cmd=$(tr -d '\0' < /proc/$pid/cmdline)
+  echo "$pid Process"
+  echo "Working directory on $who_folder"
+  echo "Ran by user ${who_user}"
+  echo "Triggered by command ${triggered_by_cmd}"
 }
 
 while test $# -gt 0; do
@@ -56,14 +67,7 @@ while test $# -gt 0; do
       ;;
     --info*)
       if test $# -gt 0; then
-        pid=$(echo $1 | sed -e 's/^[^=]*=//g')
-        who_folder=$(sudo lsof -w -p ${pid} | grep cwd | awk '{ print $9 }')
-        who_user=$(sudo lsof -w -p ${pid} | grep cwd | awk '{ print $3 }')
-        triggered_by_cmd=$(tr -d '\0' < /proc/$pid/cmdline)
-        echo "$pid Process"
-        echo "Working directory on $who_folder"
-        echo "Ran by user ${who_user}"
-        echo "Triggered by command ${triggered_by_cmd}"
+        info $1
       else
         echo "no process specified"
         exit 1
