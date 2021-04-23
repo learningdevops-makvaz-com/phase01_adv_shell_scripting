@@ -49,45 +49,24 @@ fi
 
 while test $# -gt 1; do
   case "$2" in
-    -h) usage ;;
-    -u)
-      if test $# -gt 0; then
-        get_owner $1
-      else
-        echo "no process specified"
-        exit 1
-      fi
+    -h)
+      usage 
       shift
+      ;;
+    -u)
+      get_owner $1
       shift
       ;;
     -c)
-      if test $# -gt 0; then
-        get_command $1
-      else
-        echo "no process specified"
-        exit 1
-      fi
-      shift
+      get_command $1
       shift
       ;;
     -e)
-      if test $# -gt 0; then
-        get_env_vars $1
-      else
-        echo "no process specified"
-        exit 1
-      fi
-      shift
+      get_env_vars $1
       shift
       ;;
     -f)
-      if test $# -gt 0; then
-        get_opened_files $1
-      else
-        echo "no process specified"
-        exit 1
-      fi
-      shift
+      get_opened_files $1
       shift
       ;;
     *)
