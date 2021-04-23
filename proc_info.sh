@@ -14,7 +14,6 @@ usage(){
   echo "-c                   Show command that started the process"
   echo "-f                   Show opened files by the process"
   echo "-h                   Show this help"
-  exit 0
 }
 
 #Function for -u flag
@@ -43,11 +42,15 @@ get_opened_files(){
   ls -l /proc/$pid/fd | less | awk '{ print $11 }'
 }
 
-while test $# -gt 0; do
-  case "$1" in
+if [[ $# < 2 ]] ; then
+    echo "You need a PID and a Flag to run this command. Run 'proc_info -h' for help."
+    exit 1
+fi
+
+while test $# -gt 1; do
+  case "$2" in
     -h) usage ;;
     -u)
-      shift
       if test $# -gt 0; then
         get_owner $1
       else
@@ -55,9 +58,9 @@ while test $# -gt 0; do
         exit 1
       fi
       shift
+      shift
       ;;
     -c)
-      shift
       if test $# -gt 0; then
         get_command $1
       else
@@ -65,9 +68,9 @@ while test $# -gt 0; do
         exit 1
       fi
       shift
+      shift
       ;;
     -e)
-      shift
       if test $# -gt 0; then
         get_env_vars $1
       else
@@ -75,9 +78,9 @@ while test $# -gt 0; do
         exit 1
       fi
       shift
+      shift
       ;;
     -f)
-      shift
       if test $# -gt 0; then
         get_opened_files $1
       else
@@ -85,7 +88,11 @@ while test $# -gt 0; do
         exit 1
       fi
       shift
+      shift
       ;;
-    *) usage ;;
+    *)
+     echo "Invalid Flag or Option. Run 'proc_info -h' for help" 
+     exit 1
+     ;;
   esac
 done
