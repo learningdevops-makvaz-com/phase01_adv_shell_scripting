@@ -42,6 +42,12 @@ get_command(){
   cat /proc/$pid/comm
 }
 
+#Function for -e flag
+get_env_vars(){
+  pid=$1
+  cat /proc/$pid/environ | tr '\0' '\n'
+}
+
 while test $# -gt 0; do
   case "$1" in
     -h) usage ;;
@@ -102,6 +108,16 @@ while test $# -gt 0; do
       shift
       if test $# -gt 0; then
         get_command $1
+      else
+        echo "no process specified"
+        exit 1
+      fi
+      shift
+      ;;
+    -e)
+      shift
+      if test $# -gt 0; then
+        get_env_vars $1
       else
         echo "no process specified"
         exit 1
