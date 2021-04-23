@@ -17,17 +17,6 @@ usage(){
   exit 0
 }
 
-info(){
-  pid=$(echo $1 | sed -e 's/^[^=]*=//g')
-  who_folder=$(sudo lsof -w -p ${pid} | grep cwd | awk '{ print $9 }')
-  who_user=$(sudo lsof -w -p ${pid} | grep cwd | awk '{ print $3 }')
-  triggered_by_cmd=$(tr -d '\0' < /proc/$pid/cmdline)
-  echo "$pid Process"
-  echo "Working directory on $who_folder"
-  echo "Ran by user ${who_user}"
-  echo "Triggered by command ${triggered_by_cmd}"
-}
-
 #Function for -u flag
 get_owner(){
   pid=$1
