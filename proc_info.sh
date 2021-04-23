@@ -48,52 +48,15 @@ get_env_vars(){
   cat /proc/$pid/environ | tr '\0' '\n'
 }
 
+#Function for -f flag
+get_opened_files(){
+  pid=$1
+  ls -l /proc/$pid/fd | less | awk '{ print $11 }'
+}
+
 while test $# -gt 0; do
   case "$1" in
     -h) usage ;;
-    -i)
-      shift
-      if test $# -gt 0; then
-        pid=$1
-        who_folder=$(sudo lsof -w -p ${pid} | grep cwd | awk '{ print $9 }')
-        who_user=$(sudo lsof -w -p ${pid} | grep cwd | awk '{ print $3 }')
-        triggered_by_cmd=$(tr -d '\0' < /proc/$pid/cmdline)
-        echo "$pid Process"
-        echo "Working directory on $who_folder"
-        echo "Ran by user ${who_user}"
-        echo "Triggered by command ${triggered_by_cmd}"
-      else
-        echo "no process specified"
-        exit 1
-      fi
-      shift
-      ;;
-    -iv2)
-      shift
-      if test $# -gt 0; then
-        pid=$1
-        who_folder=$(sudo lsof -w -p ${pid} | grep cwd | awk '{ print $9 }')
-        who_user=$(sudo lsof -w -p ${pid} | grep cwd | awk '{ print $3 }')
-        triggered_by_cmd=$(tr -d '\0' < /proc/$pid/cmdline)
-        echo "$pid Process"
-        echo "Working directory on $who_folder"
-        echo "Ran by user ${who_user}"
-        echo "Triggered by command ${triggered_by_cmd}"
-      else
-        echo "no process specified"
-        exit 1
-      fi
-      shift
-      ;;
-    --info*)
-      if test $# -gt 0; then
-        info $1
-      else
-        echo "no process specified"
-        exit 1
-      fi
-      shift
-      ;;
     -u)
       shift
       if test $# -gt 0; then
@@ -124,8 +87,16 @@ while test $# -gt 0; do
       fi
       shift
       ;;
+    -f)
+      shift
+      if test $# -gt 0; then
+        get_opened_files $1
+      else
+        echo "no process specified"
+        exit 1
+      fi
+      shift
+      ;;
     *) usage ;;
-    # break
-    # ;;
   esac
 done
