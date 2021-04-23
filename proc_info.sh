@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# feel free to use this option in case of wrong parameters set, or help needed
+#Function for -h flag OR invalid option
 usage(){
   echo "proc_info.sh - An easy cli tool for PID inspection"
   echo
@@ -28,11 +28,18 @@ info(){
   echo "Triggered by command ${triggered_by_cmd}"
 }
 
+#Function for -u flag
 get_owner(){
   pid=$1
   user_id=$(cat /proc/$pid/status | grep Uid | awk '{ print $2 }')
   #https://unix.stackexchange.com/a/36582/468165 - Get user by Id
   getent passwd "$user_id" | cut -d: -f1
+}
+
+#Function for -c flag
+get_command(){
+  pid=$1
+  cat /proc/$pid/comm
 }
 
 while test $# -gt 0; do
@@ -85,6 +92,16 @@ while test $# -gt 0; do
       shift
       if test $# -gt 0; then
         get_owner $1
+      else
+        echo "no process specified"
+        exit 1
+      fi
+      shift
+      ;;
+    -c)
+      shift
+      if test $# -gt 0; then
+        get_command $1
       else
         echo "no process specified"
         exit 1
