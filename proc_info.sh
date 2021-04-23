@@ -28,6 +28,13 @@ info(){
   echo "Triggered by command ${triggered_by_cmd}"
 }
 
+get_owner(){
+  pid=$1
+  user_id=$(cat /proc/$pid/status | grep Uid | awk '{ print $2 }')
+  #https://unix.stackexchange.com/a/36582/468165 - Get user by Id
+  getent passwd "$user_id" | cut -d: -f1
+}
+
 while test $# -gt 0; do
   case "$1" in
     -h) usage ;;
@@ -74,8 +81,18 @@ while test $# -gt 0; do
       fi
       shift
       ;;
-    *)
-      break
+    -u)
+      shift
+      if test $# -gt 0; then
+        get_owner $1
+      else
+        echo "no process specified"
+        exit 1
+      fi
+      shift
       ;;
+    *) usage ;;
+    # break
+    # ;;
   esac
 done
