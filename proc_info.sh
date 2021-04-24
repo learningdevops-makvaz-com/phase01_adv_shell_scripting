@@ -27,8 +27,15 @@ get_owner(){
 #Function for -c flag
 get_command(){
   pid=$1
-  cat /proc/$pid/cmdline ; echo
+  #cat /proc/$pid/cmdline ; echo
+  IFS=''
+  cat /proc/$pid/cmdline |
+  while read data
+  do
+    echo "$data"
+  done
 }
+
 
 #Function for -e flag
 get_env_vars(){
