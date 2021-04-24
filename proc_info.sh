@@ -27,7 +27,7 @@ get_owner(){
 #Function for -c flag
 get_command(){
   pid=$1
-  cat /proc/$pid/comm
+  cat /proc/$pid/cmdline ; echo
 }
 
 #Function for -e flag
@@ -41,6 +41,12 @@ get_opened_files(){
   pid=$1
   ls -l /proc/$pid/fd | less | awk '{ print $11 }'
 }
+
+if [[ $# -eq 1 ]] && [[ $1 == "-h" ]] ; then
+	usage
+	exit 0
+fi
+	
 
 if [[ $# < 2 ]] ; then
     echo "You need a PID and a Flag to run this command. Run 'proc_info -h' for help."
