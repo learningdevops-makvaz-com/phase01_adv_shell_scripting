@@ -32,9 +32,11 @@ case $1 in
         -f)
                 echo "Process entered: $2. Below are shown the files opened by the process."
                 sudo ls -l /proc/$2/fd
+				exit 0
         ;;
         -h)
                 usage
+				exit 0
         ;;
         -*)
                 echo "Error: no such option $1"
