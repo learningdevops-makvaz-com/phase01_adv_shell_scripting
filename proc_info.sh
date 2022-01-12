@@ -15,3 +15,29 @@ function usage(){
   echo "-f                   Show opened files by the process"
   echo "-h                   Show this help"
 }
+
+case $1 in
+        -e)
+                echo "Process entered: $2. Below it is shown its environment variables."
+                strings /proc/$2/environ
+                exit 0
+        ;;
+        -u)
+                echo "Process entered: $2. Below it is shown its owner."
+                ps -o user= -p $2
+                exit 0
+        ;;
+        -c)
+        ;;
+        -f)
+                echo "Process entered: $2. Below are shown the files opened by the process."
+                sudo ls -l /proc/$2/fd
+        ;;
+        -h)
+                usage
+        ;;
+        -*)
+                echo "Error: no such option $1"
+                exit 1
+        ;;
+esac
